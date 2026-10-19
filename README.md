@@ -1,2 +1,26 @@
-# dify-local-knowledge-chatflow
-A practical Dify chatflow for local knowledge-base Q&amp;A, with careful citations and a no-fuss import guide.
+# 本地知识库问答：让资料真的派上用场
+
+资料散在笔记、文档和截图里时，最难的往往不是“问 AI”，而是弄清楚它凭什么这么回答。
+
+这是一个我在 Dify 里边用边打磨的本地知识库 Chatflow：先把问题和检索资料对上，再让回答只引用能核对的证据。临时上传的附件也能一起参考；它们只参与当前这轮问答，不会被这个流程送去入库。回答末尾会把用到的资料列出来，点开还能回看原文。
+
+我把流程 DSL 和导入时容易踩的几处配置放在这里，方便自己迁移，也希望能给正在搭本地 RAG 的人一点可直接上手的参考。它不是开箱即用的托管服务：检索 bridge、向量库和模型仍需要你自己的 Dify 环境。
+
+## 里面有什么
+
+- `workflow/local_knowledge_chatflow_temporary_attachments.yml`：Dify Advanced Chatflow DSL，供导入和继续改造。
+- `workflow/IMPORT.md`：导入、配置和本地依赖说明。
+
+流程可以接收 Markdown、TXT、可提取文字的 PDF，以及 PNG、JPG、JPEG、HEIC。图片和文档附件会在本轮读取；附件不会通过这个流程调用 `/ingest` 或写入 Qdrant。知识库检索与附件上下文会分开处理，回答的引用和资料链接由流程代码校验。
+
+## 开始前
+
+需要一套能运行 Advanced Chatflow 的 Dify，以及你自己的外部知识库检索 API 和 bridge。导入后，请按 [导入说明](workflow/IMPORT.md) 绑定目标知识集、模型，并在 Dify 界面填写 `BRIDGE_API_KEY`。密钥不要提交到 Git。
+
+## 一个重要的小提醒
+
+仓库里的 DSL 是可导入、可继续改的流程版本；Dify 插件、模型名称和知识集 ID 会随你的环境变化。导入后先检查这些绑定，再用自己的资料试跑。扫描型 PDF 没有文字层时可能读不到内容；Dify 平台对会话和上传文件的保存，也仍由你部署里的保留设置决定。
+
+## 为什么做这个
+
+我想要的不是一个回答得很像那么回事的黑盒，而是一个遇到证据不足会说清楚、给出结论时能带我回到原文的工具。这个仓库记录的是这条路上已经跑通的一版流程，也欢迎你按自己的资料结构改出更合手的版本。
